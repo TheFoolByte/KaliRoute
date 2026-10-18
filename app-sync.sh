@@ -27,40 +27,24 @@ write_ignore() {
 .env
 *.env
 *.env.*
-auth.json
-credentials*
 api-key-secret
 logs/
-audio_cache/
-checkpoints/
-state.db-wal
-state.db-shm
 *.pem
 *.key
 EOF
 }
 
 snapshot() {
-  mkdir -p "$STAGE/9router" "$STAGE/hermes"
+  mkdir -p "$STAGE/9router"
   if [[ -d "$ROOT_DIR/.9router" ]]; then
     rsync -a --delete \
       --exclude='logs/' --exclude='*.env' --exclude='.env' --exclude='api-key-secret' \
       --exclude='db/data.sqlite-wal' --exclude='db/data.sqlite-shm' \
       "$ROOT_DIR/.9router/" "$STAGE/9router/"
   fi
-  if [[ -d "$ROOT_DIR/.hermes" ]]; then
-    rsync -a --delete \
-      --exclude='logs/' --exclude='audio_cache/' --exclude='checkpoints/' \
-      --exclude='*.env' --exclude='.env' --exclude='auth.json' --exclude='credentials*' \
-      --exclude='state.db-wal' --exclude='state.db-shm' \
-      "$ROOT_DIR/.hermes/" "$STAGE/hermes/"
-  fi
   if [[ -f "$ROOT_DIR/.9router/db/data.sqlite" ]] && command -v sqlite3 >/dev/null 2>&1; then
     mkdir -p "$STAGE/9router/db"
     sqlite3 "$ROOT_DIR/.9router/db/data.sqlite" ".backup '$STAGE/9router/db/data.sqlite'"
-  fi
-  if [[ -f "$ROOT_DIR/.hermes/state.db" ]] && command -v sqlite3 >/dev/null 2>&1; then
-    sqlite3 "$ROOT_DIR/.hermes/state.db" ".backup '$STAGE/hermes/state.db'"
   fi
   write_ignore
 }
@@ -90,10 +74,6 @@ restore() {
   if [[ -d "$STAGE/9router" ]]; then
     mkdir -p "$ROOT_DIR/.9router"
     rsync -a "$STAGE/9router/" "$ROOT_DIR/.9router/"
-  fi
-  if [[ -d "$STAGE/hermes" ]]; then
-    mkdir -p "$ROOT_DIR/.hermes"
-    rsync -a "$STAGE/hermes/" "$ROOT_DIR/.hermes/"
   fi
 }
 

@@ -20,7 +20,7 @@ fi
 ssh-keygen -A
 /usr/sbin/sshd
 
-mkdir -p /root/.hermes/logs /root/src-apps /root/src-kali /root/tools /root/wordlists /root/labs /var/lib/kaliforge
+mkdir -p /root/src-apps /root/src-kali /root/tools /root/wordlists /root/labs /var/lib/kaliforge
 if [[ -n "$TOKEN" ]]; then
   printf '%s' "$TOKEN" > /var/lib/kaliforge/github-token; chmod 0600 /var/lib/kaliforge/github-token
   if [[ -n "$APPS_REPO" ]]; then APPS_REPO="$APPS_REPO" /usr/local/bin/app-sync restore || echo 'app-sync restore failed; inspect logs and repo' >&2; fi
@@ -31,17 +31,6 @@ if [[ "$(get '.ninerouter.enabled')" != false ]]; then
   ROUTER_DATA=$(get '.ninerouter.data_dir'); mkdir -p "$ROUTER_DATA"
   if [[ ! -s "$ROUTER_DATA/api-key-secret" ]]; then openssl rand -hex 32 > "$ROUTER_DATA/api-key-secret"; chmod 0600 "$ROUTER_DATA/api-key-secret"; fi
   env -u PORT DATA_DIR="$ROUTER_DATA" PORT="$(get '.ninerouter.port')" API_KEY_SECRET="$(<"$ROUTER_DATA/api-key-secret")" INITIAL_PASSWORD="$ROOT_PASSWORD" HOSTNAME=0.0.0.0 NODE_ENV=production nohup 9router --no-browser --skip-update >/var/log/9router.log 2>&1 &
-fi
-if [[ "$(get '.hermes.enabled')" != false ]]; then
-  if [[ -n "$ROOT_PASSWORD" ]]; then
-    DASH_HASH=$(ROOT_PASSWORD="$ROOT_PASSWORD" python3 -c 'import base64,hashlib,os,secrets; salt=secrets.token_bytes(16); n,r,p=16384,8,1; key=hashlib.scrypt(os.environ["ROOT_PASSWORD"].encode(),salt=salt,n=n,r=r,p=p,dklen=32); print(f"scrypt${n}${r}${p}${base64.b64encode(salt).decode()}${base64.b64encode(key).decode()}")')
-    hermes config set dashboard.basic_auth.username root >/dev/null
-    hermes config set dashboard.basic_auth.password_hash "$DASH_HASH" >/dev/null
-    hermes config set dashboard.basic_auth.password '' >/dev/null
-  fi
-  if [[ "$(get '.hermes.gateway_auto_start')" == true ]]; then nohup hermes gateway run >/var/log/hermes-gateway.log 2>&1 & fi
-  if [[ "$(get '.hermes.dashboard_enabled')" != false ]]; then nohup hermes dashboard --host 0.0.0.0 --port "$(get '.hermes.dashboard_port')" --no-open >/var/log/hermes-dashboard.log 2>&1 & fi
-  if [[ "$(get '.hermes.serve_enabled')" == true ]]; then nohup hermes serve --host 0.0.0.0 --port "$(get '.hermes.serve_port')" --no-open >/var/log/hermes-serve.log 2>&1 & fi
 fi
 if [[ -n "$TOKEN" ]]; then
   [[ -n "$APPS_REPO" ]] && nohup /usr/local/bin/app-sync watch >/var/log/app-sync.log 2>&1 &

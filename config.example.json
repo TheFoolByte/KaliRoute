@@ -6,6 +6,5 @@
   "sync_interval": 300,
   "apps_repo": "",
   "kali_repo": "",
-  "ninerouter": {"enabled": true, "port": 20128, "data_dir": "/root/.9router"},
-  "hermes": {"enabled": true, "dashboard_enabled": true, "dashboard_port": 8686, "gateway_auto_start": true, "serve_enabled": false, "serve_port": 8642}
+  "ninerouter": {"enabled": true, "port": 20128, "data_dir": "/root/.9router"}
 }
