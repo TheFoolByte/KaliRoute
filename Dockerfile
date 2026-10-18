@@ -26,11 +26,11 @@ RUN wget -qO /usr/local/bin/ttyd https://github.com/tsl0922/ttyd/releases/downlo
     && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config \
     && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 
-COPY config.example.json /etc/kaliforge/config.json
-COPY entrypoint.sh /usr/local/bin/kaliforge-entrypoint
+COPY config.example.json /etc/kaliroute/config.json
+COPY entrypoint.sh /usr/local/bin/kaliroute-entrypoint
 COPY app-sync.sh /usr/local/bin/app-sync
 COPY kali-sync.sh /usr/local/bin/kali-sync
-RUN chmod 0755 /usr/local/bin/kaliforge-entrypoint /usr/local/bin/app-sync /usr/local/bin/kali-sync
+RUN chmod 0755 /usr/local/bin/kaliroute-entrypoint /usr/local/bin/app-sync /usr/local/bin/kali-sync
 
 EXPOSE 22 7681 20128
-CMD ["/usr/local/bin/kaliforge-entrypoint"]
+CMD ["/usr/local/bin/kaliroute-entrypoint"]

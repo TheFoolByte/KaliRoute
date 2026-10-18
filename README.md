@@ -1,4 +1,4 @@
-# KaliForge
+# KaliRoute
 
 Kali Rolling cloud workspace for authorized labs and CTFs. Combines the Kali Railway reference with RailDK's SSH, 9router, and split GitHub backups. Existing reference repositories remain untouched.
 
@@ -28,7 +28,7 @@ Required/optional: `ROOT_PASSWORD`, `AUTHORIZED_KEYS`, `GITHUB_TOKEN`, `APPS_REP
 ## Build
 
 ```sh
-docker build -t kaliforge .
+docker build -t kaliroute .
 ```
 
 ## Security / scope

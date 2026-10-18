@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-CONFIG=${CONFIG_FILE:-/etc/kaliforge/config.json}
+CONFIG=${CONFIG_FILE:-/etc/kaliroute/config.json}
 get() { jq -r "$1 | if . == null then empty else tostring end" "$CONFIG" 2>/dev/null || true; }
 pick() { local v=${!1:-}; if [[ -n "$v" ]]; then printf '%s' "$v"; else get "$2"; fi; }
 ROOT_PASSWORD=$(pick ROOT_PASSWORD .root_password)
@@ -20,9 +20,9 @@ fi
 ssh-keygen -A
 /usr/sbin/sshd
 
-mkdir -p /root/src-apps /root/src-kali /root/tools /root/wordlists /root/labs /var/lib/kaliforge
+mkdir -p /root/src-apps /root/src-kali /root/tools /root/wordlists /root/labs /var/lib/kaliroute
 if [[ -n "$TOKEN" ]]; then
-  printf '%s' "$TOKEN" > /var/lib/kaliforge/github-token; chmod 0600 /var/lib/kaliforge/github-token
+  printf '%s' "$TOKEN" > /var/lib/kaliroute/github-token; chmod 0600 /var/lib/kaliroute/github-token
   if [[ -n "$APPS_REPO" ]]; then APPS_REPO="$APPS_REPO" /usr/local/bin/app-sync restore || echo 'app-sync restore failed; inspect logs and repo' >&2; fi
   if [[ -n "$KALI_REPO" ]]; then KALI_REPO="$KALI_REPO" /usr/local/bin/kali-sync restore || echo 'kali-sync restore failed; inspect logs and repo' >&2; fi
 fi

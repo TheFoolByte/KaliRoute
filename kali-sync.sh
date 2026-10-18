@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-ROOT_DIR=${KF_ROOT:-/root}
-STAGE=${KF_STAGE:-/root/src-kali}
+ROOT_DIR=${KR_ROOT:-/root}
+STAGE=${KR_STAGE:-/root/src-kali}
 TOKEN=${GITHUB_TOKEN:-}
 REPO=${KALI_REPO:-}
 [[ -n "$TOKEN" ]] || { echo 'kali-sync: set GITHUB_TOKEN' >&2; exit 1; }
 [[ -n "$REPO" ]] || { echo 'kali-sync: set KALI_REPO=owner/repo' >&2; exit 1; }
 REPO=${REPO#https://github.com/}; REPO=${REPO%.git}
 [[ "$REPO" == */* ]] || { echo 'kali-sync: KALI_REPO must be owner/repo' >&2; exit 1; }
-clean_remote=${KF_CLEAN_REMOTE_URL:-"https://github.com/${REPO}.git"}
-remote=${KF_REMOTE_URL:-"$clean_remote"}
+clean_remote=${KR_CLEAN_REMOTE_URL:-"https://github.com/${REPO}.git"}
+remote=${KR_REMOTE_URL:-"$clean_remote"}
 export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=credential.helper
 export GIT_CONFIG_VALUE_0='!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f'
 mkdir -p "$STAGE"
@@ -87,8 +87,8 @@ restore() {
 
 push() {
   snapshot
-  git -C "$STAGE" config user.name "${GITHUB_SYNC_NAME:-KaliForge Sync}"
-  git -C "$STAGE" config user.email "${GITHUB_SYNC_EMAIL:-kaliforge-sync@local}"
+  git -C "$STAGE" config user.name "${GITHUB_SYNC_NAME:-KaliRoute Sync}"
+  git -C "$STAGE" config user.email "${GITHUB_SYNC_EMAIL:-kaliroute-sync@local}"
   git -C "$STAGE" add -A
   if git -C "$STAGE" diff --cached --quiet; then
     echo 'kali-sync: nothing changed'

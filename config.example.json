@@ -1,8 +1,8 @@
 {
   "root_password": "",
   "github_token": "",
-  "github_sync_email": "kaliforge-sync@local",
-  "github_sync_name": "KaliForge Sync",
+  "github_sync_email": "kaliroute-sync@local",
+  "github_sync_name": "KaliRoute Sync",
   "sync_interval": 300,
   "apps_repo": "",
   "kali_repo": "",
