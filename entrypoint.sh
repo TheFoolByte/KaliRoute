@@ -11,6 +11,20 @@ KALI_REPO=$(pick KALI_REPO .kali_repo)
 INTERVAL=$(pick SYNC_INTERVAL .sync_interval); INTERVAL=${INTERVAL:-300}
 export GITHUB_TOKEN="$TOKEN" APPS_REPO KALI_REPO SYNC_INTERVAL="$INTERVAL"
 
+# Persist the resolved (non-secret) repo names back into the config file. The
+# exported environment above only reaches this process tree; SSH and ttyd shells
+# do not inherit it, so app-sync/kali-sync read the repos from here instead.
+# The token is deliberately NOT persisted here — it lives in
+# /var/lib/kaliroute/github-token (mode 0600).
+if [[ -n "$APPS_REPO" || -n "$KALI_REPO" ]] && command -v jq >/dev/null 2>&1; then
+  tmp_cfg=$(mktemp)
+  if jq --arg a "$APPS_REPO" --arg k "$KALI_REPO" \
+       '.apps_repo=$a | .kali_repo=$k' "$CONFIG" > "$tmp_cfg" 2>/dev/null; then
+    cat "$tmp_cfg" > "$CONFIG" 2>/dev/null || true
+  fi
+  rm -f "$tmp_cfg"
+fi
+
 if [[ -n "$ROOT_PASSWORD" ]]; then echo "root:$ROOT_PASSWORD" | chpasswd; fi
 if [[ -n "${AUTHORIZED_KEYS:-}" ]]; then
   install -d -m 0700 /root/.ssh
